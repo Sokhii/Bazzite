@@ -27,12 +27,10 @@ concurrency:
 
 jobs:
   build_push:
-    name: Build and push image
     runs-on: ubuntu-24.04
-
     permissions:
       contents: read
-      packages: write  # This is the critical line for GHCR
+      packages: write
       id-token: write
 
     steps:
@@ -94,16 +92,16 @@ jobs:
 
       - name: Build Image
         id: build_image
-        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
+        uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
             ./Containerfile
-          # Postfix image name with -custom to make it a little more descriptive
-          # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          oci: false
+          oci: true
+          extra-args: |
+            --unsetlabel=org.opencontainers.image.source
 
       # Rechunk is a script that we use on Universal Blue to make sure there isnt a single huge layer when your image gets published.
       # This does not make your image faster to download, just provides better resumability and fixes a few errors.
