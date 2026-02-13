@@ -1,4 +1,4 @@
-# Allow build scripts to be referenced without being copied into the final image
+FROM ghcr.io/ublue-os/bazzite:43.20260210
 FROM scratch AS ctx
 COPY build_files /
 
